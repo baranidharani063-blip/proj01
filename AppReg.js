@@ -5,7 +5,6 @@ function App() {
     name: "",
     email: "",
     password: "",
-    confirmPassword: "",
   });
 
   const handleChange = (e) => {
@@ -18,20 +17,17 @@ function App() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match");
-      return;
-    }
-
     alert("Registration successful!");
+
     console.log(formData);
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+
       <div className="bg-white w-full max-w-md p-8 rounded-xl shadow-md">
 
-        <h1 className="text-2xl font-bold text-center text-gray-800">
+        <h1 className="text-2xl font-bold text-center">
           Create Account
         </h1>
 
@@ -41,10 +37,9 @@ function App() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
 
+          {/* Name */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Full Name
-            </label>
+            <label>Full Name</label>
 
             <input
               type="text"
@@ -53,14 +48,13 @@ function App() {
               value={formData.name}
               onChange={handleChange}
               required
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border rounded-lg px-4 py-2 mt-1"
             />
           </div>
 
+          {/* Email */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Email
-            </label>
+            <label>Email</label>
 
             <input
               type="email"
@@ -69,14 +63,13 @@ function App() {
               value={formData.email}
               onChange={handleChange}
               required
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border rounded-lg px-4 py-2 mt-1"
             />
           </div>
 
+          {/* Password */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Password
-            </label>
+            <label>Password</label>
 
             <input
               type="password"
@@ -85,43 +78,29 @@ function App() {
               value={formData.password}
               onChange={handleChange}
               required
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border rounded-lg px-4 py-2 mt-1"
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Confirm Password
-            </label>
-
-            <input
-              type="password"
-              name="confirmPassword"
-              placeholder="Confirm your password"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              required
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
+          {/* Button */}
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-2.5 rounded-lg font-semibold hover:bg-blue-700"
+            className="w-full bg-blue-600 text-white py-2 rounded-lg"
           >
             Register
           </button>
 
         </form>
 
-        <p className="text-center text-sm text-gray-600 mt-6">
+        <p className="text-center text-sm mt-6">
           Already have an account?{" "}
-          <span className="text-blue-600 font-semibold cursor-pointer">
+          <span className="text-blue-600">
             Login
           </span>
         </p>
 
       </div>
+
     </div>
   );
 }
