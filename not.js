@@ -1,30 +1,22 @@
-Yes 👍 orey server.js file-la simple-ah:
-
+```js
 const express = require("express");
 
 const app = express();
 
-// Logger Middleware
-app.use((req, res, next) => {
-  console.log(req.method, req.url);
-  next();
-});
+// JSON body read panna
+app.use(express.json());
 
-// Routes
-app.get("/user/1", (req, res) => {
-  res.send("User 1");
-});
-
+// POST /login
 app.post("/login", (req, res) => {
-  res.send("Login");
+  const { username, password } = req.body;
+
+  res.json({
+    message: "Login successful",
+    user: username
+  });
 });
 
 app.listen(5000, () => {
   console.log("Server running on port 5000");
 });
-Console output:
-Server running on port 5000
-GET /user/1
-POST /login
-
-Main point: app.use() → every incoming request-ஐ log பண்ணும் middleware.
+```
