@@ -1,24 +1,100 @@
-# Logs
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
+Sure 👍 Monday test-ku easy-ah remember panna simple React + Tailwind Dashboard Home Page pannalam. இதில் Sidebar + Welcome + 3 Cards மட்டும் இருக்கும்.
 
-node_modules
-dist
-dist-ssr
-*.local
+1. src/App.jsx replace pannunga
+function App() {
+  return (
+    <div className="min-h-screen bg-gray-100 flex">
 
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
-.DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+      {/* Sidebar */}
+      <div className="w-56 bg-blue-600 text-white p-5">
+        <h1 className="text-2xl font-bold mb-10">
+          My Dashboard
+        </h1>
+
+        <ul className="space-y-5">
+          <li className="cursor-pointer hover:text-gray-200">
+            🏠 Home
+          </li>
+          <li className="cursor-pointer hover:text-gray-200">
+            👤 Profile
+          </li>
+          <li className="cursor-pointer hover:text-gray-200">
+            ⚙️ Settings
+          </li>
+          <li className="cursor-pointer hover:text-gray-200">
+            🚪 Logout
+          </li>
+        </ul>
+      </div>
+
+      {/* Main Content */}
+      <div className="flex-1 p-8">
+
+        <h1 className="text-3xl font-bold text-gray-800">
+          Welcome Back 👋
+        </h1>
+
+        <p className="text-gray-500 mt-2">
+          Here is your dashboard overview.
+        </p>
+
+        {/* Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+
+          <div className="bg-white p-6 rounded-lg shadow">
+            <h2 className="text-gray-500">Users</h2>
+            <p className="text-3xl font-bold text-blue-600 mt-2">
+              120
+            </p>
+          </div>
+
+          <div className="bg-white p-6 rounded-lg shadow">
+            <h2 className="text-gray-500">Orders</h2>
+            <p className="text-3xl font-bold text-green-600 mt-2">
+              85
+            </p>
+          </div>
+
+          <div className="bg-white p-6 rounded-lg shadow">
+            <h2 className="text-gray-500">Revenue</h2>
+            <p className="text-3xl font-bold text-purple-600 mt-2">
+              ₹25,000
+            </p>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  );
+}
+
+export default App;
+Simple-ah structure purinjikonga:
+App
+│
+├── Sidebar
+│    ├── Home
+│    ├── Profile
+│    ├── Settings
+│    └── Logout
+│
+└── Main Content
+     ├── Welcome Message
+     └── Dashboard Cards
+          ├── Users
+          ├── Orders
+          └── Revenue
+
+Important Tailwind classes:
+
+flex → Side by side
+w-56 → Sidebar width
+p-8 → Padding
+grid → Cards arrange panna
+grid-cols-1 md:grid-cols-3 → Mobile-la 1 card, desktop-la 3 cards
+bg-white → White background
+rounded-lg → Rounded corners
+shadow → Card shadow
+
+இதுவே test-ku simple dashboard project. Login page irundhu login pannitu, next dashboard page-ku navigate ஆகுற மாதிரியும் simple-ah next step-la add pannalaam.
