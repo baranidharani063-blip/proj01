@@ -1,0 +1,392 @@
+ஆம் 👍 நீங்க already useState, form, Tailwind, component basics எல்லாம் தெரிஞ்சிருக்கீங்க. So இப்போ Routes மட்டும் புதுசா connect பண்ணி, flow-ஐ simple-ஆ build பண்ணலாம்.
+
+நம்ம flow:
+
+Login Page → Login button → Home Page → Navbar + Home content + Footer
+
+1. முதலில் react-router-dom install பண்ணுங்க
+
+VS Code terminal:
+
+npm install react-router-dom
+2. Folder Structure
+
+src உள்ளே இப்படி வைத்துக்கோங்க:
+
+src
+│
+├── components
+│   ├── Navbar.jsx
+│   └── Footer.jsx
+│
+├── pages
+│   ├── Login.jsx
+│   └── Home.jsx
+│
+├── App.jsx
+├── main.jsx
+└── index.css
+
+Simple idea:
+
+Login.jsx → Login page
+Home.jsx → Login successful ஆன பிறகு வரும் page
+Navbar.jsx → Home page மேலே
+Footer.jsx → Home page கீழே
+App.jsx → Routes
+main.jsx → App start
+3. Login.jsx
+
+src/pages/Login.jsx
+
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
+function Login() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const navigate = useNavigate();
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+
+    console.log("Email:", email);
+    console.log("Password:", password);
+
+    alert("Login Successful!");
+
+    // Login success → Home page
+    navigate("/home");
+  };
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+
+      <div className="bg-white p-8 rounded-lg shadow-md w-96">
+
+        <h1 className="text-2xl font-bold text-center mb-6">
+          Login
+        </h1>
+
+        <form onSubmit={handleLogin}>
+
+          <label className="block mb-2 font-medium">
+            Gmail
+          </label>
+
+          <input
+            type="email"
+            placeholder="Enter your Gmail"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full border p-2 rounded mb-4"
+          />
+
+          <label className="block mb-2 font-medium">
+            Password
+          </label>
+
+          <input
+            type="password"
+            placeholder="Enter your password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full border p-2 rounded mb-6"
+          />
+
+          <button
+            type="submit"
+            className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+          >
+            Login
+          </button>
+
+        </form>
+
+      </div>
+
+    </div>
+  );
+}
+
+export default Login;
+இங்கே புதுசா 2 things மட்டும்:
+import { useNavigate } from "react-router-dom";
+
+இதுதான் page change பண்ண பயன்படும்.
+
+அடுத்து:
+
+const navigate = useNavigate();
+
+Login success ஆனதும்:
+
+navigate("/home");
+
+அதாவது:
+
+Login button
+     ↓
+handleLogin()
+     ↓
+navigate("/home")
+     ↓
+Home page
+4. Navbar.jsx
+
+src/components/Navbar.jsx
+
+import { useState } from "react";
+
+function Navbar() {
+  const [menu, setMenu] = useState(false);
+
+  return (
+    <nav className="bg-blue-600 text-white px-6 py-4">
+
+      <div className="flex justify-between items-center">
+
+        <h1 className="text-2xl font-bold">
+          MyDashboard
+        </h1>
+
+        <div className="hidden md:flex gap-6">
+
+          <a href="/home" className="hover:text-gray-200">
+            Home
+          </a>
+
+          <a href="#" className="hover:text-gray-200">
+            About
+          </a>
+
+          <a href="#" className="hover:text-gray-200">
+            Contact
+          </a>
+
+        </div>
+
+        <button
+          onClick={() => setMenu(!menu)}
+          className="md:hidden text-2xl"
+        >
+          ☰
+        </button>
+
+      </div>
+
+      {menu && (
+        <div className="md:hidden mt-4 space-y-3">
+
+          <p>Home</p>
+          <p>About</p>
+          <p>Contact</p>
+
+        </div>
+      )}
+
+    </nav>
+  );
+}
+
+export default Navbar;
+
+உங்க existing Navbar-ஐயே basically use பண்ணியிருக்கோம்.
+
+5. Footer.jsx
+
+src/components/Footer.jsx
+
+function Footer() {
+  return (
+    <footer className="bg-gray-800 text-white text-center p-5">
+      <p>
+        © 2026 MyDashboard. All Rights Reserved.
+      </p>
+    </footer>
+  );
+}
+
+export default Footer;
+6. Home.jsx
+
+இது தான் login பண்ணிய பிறகு வரும் actual home screen.
+
+src/pages/Home.jsx
+
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
+
+function Home() {
+  return (
+    <div className="min-h-screen flex flex-col">
+
+      <Navbar />
+
+      <main className="flex-1 bg-gray-100 p-8">
+
+        <div className="max-w-5xl mx-auto">
+
+          <h1 className="text-3xl font-bold mb-4">
+            Welcome to MyDashboard
+          </h1>
+
+          <p className="text-gray-600 mb-8">
+            You have successfully logged in.
+          </p>
+
+          <div className="grid md:grid-cols-3 gap-6">
+
+            <div className="bg-white p-6 rounded-lg shadow">
+              <h2 className="text-xl font-bold mb-2">
+                Users
+              </h2>
+              <p className="text-gray-600">
+                Manage your users
+              </p>
+            </div>
+
+            <div className="bg-white p-6 rounded-lg shadow">
+              <h2 className="text-xl font-bold mb-2">
+                Products
+              </h2>
+              <p className="text-gray-600">
+                Manage your products
+              </p>
+            </div>
+
+            <div className="bg-white p-6 rounded-lg shadow">
+              <h2 className="text-xl font-bold mb-2">
+                Reports
+              </h2>
+              <p className="text-gray-600">
+                View your reports
+              </p>
+            </div>
+
+          </div>
+
+        </div>
+
+      </main>
+
+      <Footer />
+
+    </div>
+  );
+}
+
+export default Home;
+7. முக்கியமானது — App.jsx
+
+இங்கே தான் Routes இருக்கும்.
+
+src/App.jsx
+
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+
+import Login from "./pages/Login";
+import Home from "./pages/Home";
+
+function App() {
+  return (
+    <BrowserRouter>
+
+      <Routes>
+
+        <Route path="/" element={<Login />} />
+
+        <Route path="/home" element={<Home />} />
+
+      </Routes>
+
+    </BrowserRouter>
+  );
+}
+
+export default App;
+
+இதுதான் முழு routing concept.
+
+இந்த இரண்டு lines-ஐ முதலில் புரிஞ்சுக்கோங்க:
+<Route path="/" element={<Login />} />
+
+இதன் meaning:
+
+localhost:5173/
+       ↓
+   Login Page
+
+அதே மாதிரி:
+
+<Route path="/home" element={<Home />} />
+
+meaning:
+
+localhost:5173/home
+       ↓
+    Home Page
+8. main.jsx
+
+src/main.jsx
+
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+
+import App from "./App.jsx";
+import "./index.css";
+
+createRoot(document.getElementById("root")).render(
+  <StrictMode>
+    <App />
+  </StrictMode>
+);
+9. Final Folder Structure
+
+இப்போ உங்க project:
+
+src
+│
+├── components
+│   ├── Navbar.jsx
+│   └── Footer.jsx
+│
+├── pages
+│   ├── Login.jsx
+│   └── Home.jsx
+│
+├── App.jsx
+├── main.jsx
+└── index.css
+10. இப்போ எப்படி work ஆகும்?
+
+Browser-ல்:
+
+localhost:5173/
+
+open பண்ணினா:
+
+┌─────────────────────────┐
+│                         │
+│        Login            │
+│                         │
+│  Gmail                  │
+│  [______________]       │
+│                         │
+│  Password               │
+│  [______________]       │
+│                         │
+│  [      Login      ]    │
+│                         │
+└─────────────────────────┘
+
+Login click:
+
+navigate("/home");
+
+அதுக்கப்புறம்:
+
+localhost:5173/home
+Home screen:
+┌────────────────────────────
