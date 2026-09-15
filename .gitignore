@@ -1,319 +1,278 @@
-Yes 👍 I understand exactly.
-
-You need a small website-style dashboard for your Monday test:
-
-Navbar
-   ↓
-Home / Dashboard
-   ↓
-3 simple cards
-   ↓
-Recent Activity
-   ↓
-Footer
-
-And importantly:
-
-React
-Tailwind CSS
-useState
-Navbar in separate Navbar.jsx
-Footer in separate Footer.jsx
-Home in separate Home.jsx
-No dark mode
-No complicated code
-Simple enough to explain in a test
-1. Create the project
-
-VS Code terminal:
-
-npm create vite@latest my-dashboard
-
-Choose:
-
-React
-JavaScript
-
-Then:
-
-cd my-dashboard
-npm install
-
-Install Tailwind:
-
-npm install tailwindcss @tailwindcss/vite
-2. Folder structure
-
-Inside src create:
-
-src
-│
-├── components
-│   ├── Navbar.jsx
-│   └── Footer.jsx
-│
-├── pages
-│   └── Home.jsx
-│
-├── App.jsx
-├── main.jsx
-└── index.css
-3. vite.config.js
-
-Replace with:
-
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
-import tailwindcss from "@tailwindcss/vite";
-
-export default defineConfig({
-  plugins: [react(), tailwindcss()],
-});
-4. src/index.css
-@import "tailwindcss";
-5. Navbar.jsx
-
-Create:
-
-src/components/Navbar.jsx
-
-import { useState } from "react";
-
-function Navbar() {
-
-  const [menu, setMenu] = useState(false);
-
-  return (
-    <nav className="bg-blue-600 text-white px-6 py-4">
-
-      <div className="flex justify-between items-center">
-
-        {/* Logo */}
-        <h1 className="text-2xl font-bold">
-          MyDashboard
-        </h1>
-
-        {/* Desktop Menu */}
-        <div className="hidden md:flex gap-6">
-
-          <a href="#" className="hover:text-gray-200">
-            Home
-          </a>
-
-          <a href="#" className="hover:text-gray-200">
-            About
-          </a>
-
-          <a href="#" className="hover:text-gray-200">
-            Contact
-          </a>
-
-        </div>
-
-        {/* Mobile Toggle */}
-        <button
-          onClick={() => setMenu(!menu)}
-          className="md:hidden text-2xl"
-        >
-          ☰
-        </button>
-
-      </div>
-
-      {/* Mobile Menu */}
-      {menu && (
-        <div className="md:hidden mt-4 space-y-3">
-
-          <p>Home</p>
-          <p>About</p>
-          <p>Contact</p>
-
-        </div>
-      )}
-
-    </nav>
-  );
-}
-
-export default Navbar;
-useState இங்கே எதுக்கு?
-const [menu, setMenu] = useState(false);
-
-Initially menu closed.
-
-false → closed
-true  → open
-
-Button click:
-
-setMenu(!menu)
-
-அதாவது open / close toggle.
-
-6. Home.jsx
-
-Create:
-
-src/pages/Home.jsx
-
-function Home() {
-
-  return (
-    <main className="min-h-screen bg-gray-100 p-6">
-
-      {/* Welcome */}
-      <div className="mb-8">
-
-        <h1 className="text-3xl font-bold text-gray-800">
-          Welcome Back 👋
-        </h1>
-
-        <p className="text-gray-500 mt-2">
-          Here is your dashboard overview.
-        </p>
-
-      </div>
-
-
-      {/* Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-
-        {/* Users */}
-        <div className="bg-white p-6 rounded-lg shadow">
-
-          <h2 className="text-gray-500">
-            Total Users
-          </h2>
-
-          <p className="text-3xl font-bold text-blue-600 mt-2">
-            120
-          </p>
-
-        </div>
-
-
-        {/* Orders */}
-        <div className="bg-white p-6 rounded-lg shadow">
-
-          <h2 className="text-gray-500">
-            Total Orders
-          </h2>
-
-          <p className="text-3xl font-bold text-green-600 mt-2">
-            85
-          </p>
-
-        </div>
-
-
-        {/* Revenue */}
-        <div className="bg-white p-6 rounded-lg shadow">
-
-          <h2 className="text-gray-500">
-            Revenue
-          </h2>
-
-          <p className="text-3xl font-bold text-purple-600 mt-2">
-            ₹25,000
-          </p>
-
-        </div>
-
-      </div>
-
-
-      {/* Recent Activity */}
-      <div className="bg-white mt-8 p-6 rounded-lg shadow">
-
-        <h2 className="text-xl font-bold text-gray-800">
-          Recent Activity
-        </h2>
-
-        <p className="text-gray-500 mt-3">
-          New user registered
-        </p>
-
-        <p className="text-gray-500 mt-2">
-          New order received
-        </p>
-
-        <p className="text-gray-500 mt-2">
-          Payment completed
-        </p>
-
-      </div>
-
-    </main>
-  );
-}
-
-export default Home;
-7. Footer.jsx
-
-Create:
-
-src/components/Footer.jsx
-
-function Footer() {
-
-  return (
-    <footer className="bg-gray-800 text-white text-center p-5">
-
-      <p>
-        © 2026 MyDashboard. All Rights Reserved.
-      </p>
-
-    </footer>
-  );
-}
-
-export default Footer;
-8. App.jsx
-
-இது எல்லா components-ஐ connect பண்ணும்.
-
-import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
-import Home from "./pages/Home";
-
-function App() {
-
-  return (
-    <div>
-
-      <Navbar />
-
-      <Home />
-
-      <Footer />
-
-    </div>
-  );
-}
-
-export default App;
-9. main.jsx
-
-Usually Vite default code இருக்கும். Check பண்ணுங்க:
-
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
-import "./index.css";
-import App from "./App.jsx";
-
-createRoot(document.getElementById("root")).render(
-  <StrictMode>
-    <App />
-  </StrictMode>
-);
-10. Run the project 🚀
+1. Project create
 
 Terminal:
 
-npm run dev
+mkdir mongo-crud
+cd mongo-crud
 
-You will get something like:
+npm init -y
+npm install express mongoose dotenv
 
-Local: http://localhost:5173/
+Folder:
 
-Browser-la அந்த URL open பண்ணுங்க.
+mongo-crud
+│
+├── server.js
+├── .env
+└── package.json
+2. .env
+MONGO_URI=mongodb://127.0.0.1:27017/mydb
+PORT=5000
+
+இதுல:
+
+MONGO_URI → MongoDB connection
+PORT → server port
+3. server.js
+Simple MongoDB + Mongoose CRUD
+const express = require("express");
+const mongoose = require("mongoose");
+require("dotenv").config();
+
+const app = express();
+
+
+// JSON data read panna
+app.use(express.json());
+
+
+// MongoDB connect
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => {
+    console.log("MongoDB Connected");
+  })
+  .catch((error) => {
+    console.log(error);
+  });
+
+
+// Schema
+const userSchema = new mongoose.Schema({
+  name: String,
+  email: String,
+  age: Number
+});
+
+
+// Model
+const User = mongoose.model("User", userSchema);
+
+
+// ---------------- CREATE ----------------
+
+app.post("/users", async (req, res) => {
+
+  const user = await User.create(req.body);
+
+  res.json({
+    message: "User created",
+    user: user
+  });
+
+});
+
+
+// ---------------- READ ----------------
+
+app.get("/users", async (req, res) => {
+
+  const users = await User.find();
+
+  res.json(users);
+
+});
+
+
+// ---------------- READ ONE ----------------
+
+app.get("/users/:id", async (req, res) => {
+
+  const user = await User.findById(req.params.id);
+
+  res.json(user);
+
+});
+
+
+// ---------------- UPDATE ----------------
+
+app.put("/users/:id", async (req, res) => {
+
+  const user = await User.findByIdAndUpdate(
+    req.params.id,
+    req.body,
+    { new: true }
+  );
+
+  res.json({
+    message: "User updated",
+    user: user
+  });
+
+});
+
+
+// ---------------- DELETE ----------------
+
+app.delete("/users/:id", async (req, res) => {
+
+  await User.findByIdAndDelete(req.params.id);
+
+  res.json({
+    message: "User deleted"
+  });
+
+});
+
+
+// Server
+app.listen(process.env.PORT, () => {
+  console.log(`Server running on ${process.env.PORT}`);
+});
+4. Server run பண்ணுங்க
+node server.js
+
+Correct-ah இருந்தா:
+
+MongoDB Connected
+Server running on 5000
+5. இப்போ CRUD practice 🔥
+
+Postman use பண்ணுங்க.
+
+🟢 CREATE — POST
+
+URL:
+
+http://localhost:5000/users
+
+Body → raw → JSON
+
+{
+  "name": "Barani",
+  "email": "barani@gmail.com",
+  "age": 22
+}
+
+Send
+
+Response:
+
+{
+  "message": "User created",
+  "user": {
+    "_id": "68c...",
+    "name": "Barani",
+    "email": "barani@gmail.com",
+    "age": 22
+  }
+}
+
+இந்த _id-ஐ copy பண்ணி வைத்துக்கோங்க.
+
+🔵 READ — GET
+GET http://localhost:5000/users
+
+அனைத்து users-ம் வரும்.
+
+🔵 READ ONE — GET
+GET http://localhost:5000/users/68c...
+
+68c... இடத்துல உங்க actual _id.
+
+ஒரு user மட்டும் வரும்.
+
+🟡 UPDATE — PUT
+PUT http://localhost:5000/users/68c...
+
+Body:
+
+{
+  "name": "Barani Dharan",
+  "age": 23
+}
+
+Response:
+
+{
+  "message": "User updated",
+  "user": {
+    "name": "Barani Dharan",
+    "email": "barani@gmail.com",
+    "age": 23
+  }
+}
+🔴 DELETE — DELETE
+DELETE http://localhost:5000/users/68c...
+
+Response:
+
+{
+  "message": "User deleted"
+}
+⭐ நீங்க இப்போ புரிஞ்சுக்க வேண்டிய முக்கியமான 7 lines
+1. MongoDB connect
+mongoose.connect(process.env.MONGO_URI)
+
+MongoDB-க்கு connect ஆகும்.
+
+2. Schema
+const userSchema = new mongoose.Schema({
+  name: String,
+  email: String,
+  age: Number
+});
+
+Database-la user எப்படி இருக்கணும் என்று define பண்ணுவது.
+
+3. Model
+const User = mongoose.model("User", userSchema);
+
+Schema-வை வைத்து MongoDB-யுடன் work பண்ண Model உருவாக்குறோம்.
+
+4. req.body
+req.body
+
+Postman-ல அனுப்புற data.
+
+{
+  "name": "Barani",
+  "email": "barani@gmail.com"
+}
+5. req.params.id
+req.params.id
+
+URL-ல இருக்குற ID.
+
+/users/68c123
+
+இங்க:
+
+68c123
+
+தான் req.params.id.
+
+6. res.json()
+res.json({
+  message: "User created"
+});
+
+Client/Postmanக்கு response அனுப்பும்.
+
+7. Mongoose CRUD methods
+User.create()
+User.find()
+User.findById()
+User.findByIdAndUpdate()
+User.findByIdAndDelete()
+
+இதுதான் இப்போ முக்கியமாக practice பண்ண வேண்டியது.
+
+POST   → User.create()
+GET    → User.find()
+GET ID → User.findById()
+PUT    → User.findByIdAndUpdate()
+DELETE → User.findByIdAndDelete()
+
+இதையே முதலில் Postman-ல் 4–5 தடவை manually செய்து பாருங்க. அதுக்கப்புறம் நான் உங்களுக்கு req, res, Schema, Model, async/await, ஒவ்வொரு CRUD line-உம் எதுக்கு என்று line-by-line very simple Thanglish-ல teach பண்ணலாம்.
