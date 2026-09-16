@@ -1,50 +1,14 @@
-1. Project create
-
-Terminal:
-
-mkdir mongo-crud
-cd mongo-crud
-
-npm init -y
-npm install express mongoose dotenv
-
-Folder:
-
-mongo-crud
-│
-├── server.js
-├── .env
-└── package.json
-2. .env
-MONGO_URI=mongodb://127.0.0.1:27017/mydb
-PORT=5000
-
-இதுல:
-
-MONGO_URI → MongoDB connection
-PORT → server port
-3. server.js
-Simple MongoDB + Mongoose CRUD
 const express = require("express");
 const mongoose = require("mongoose");
 require("dotenv").config();
 
 const app = express();
 
-
-// JSON data read panna
 app.use(express.json());
 
 
-// MongoDB connect
-mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => {
-    console.log("MongoDB Connected");
-  })
-  .catch((error) => {
-    console.log(error);
-  });
+// MongoDB Connect
+mongoose.connect(process.env.MONGO_URI);
 
 
 // Schema
@@ -59,220 +23,53 @@ const userSchema = new mongoose.Schema({
 const User = mongoose.model("User", userSchema);
 
 
-// ---------------- CREATE ----------------
-
+// CREATE
 app.post("/users", async (req, res) => {
-
   const user = await User.create(req.body);
 
-  res.json({
-    message: "User created",
-    user: user
-  });
-
+  res.json(user);
 });
 
 
-// ---------------- READ ----------------
-
+// READ
 app.get("/users", async (req, res) => {
-
   const users = await User.find();
 
   res.json(users);
-
 });
 
 
-// ---------------- READ ONE ----------------
-
+// READ ONE
 app.get("/users/:id", async (req, res) => {
-
   const user = await User.findById(req.params.id);
 
   res.json(user);
-
 });
 
 
-// ---------------- UPDATE ----------------
-
+// UPDATE
 app.put("/users/:id", async (req, res) => {
-
   const user = await User.findByIdAndUpdate(
     req.params.id,
     req.body,
     { new: true }
   );
 
-  res.json({
-    message: "User updated",
-    user: user
-  });
-
+  res.json(user);
 });
 
 
-// ---------------- DELETE ----------------
-
+// DELETE
 app.delete("/users/:id", async (req, res) => {
-
   await User.findByIdAndDelete(req.params.id);
 
   res.json({
     message: "User deleted"
   });
-
 });
 
 
 // Server
 app.listen(process.env.PORT, () => {
-  console.log(`Server running on ${process.env.PORT}`);
+  console.log("Server running on port 5000");
 });
-4. Server run பண்ணுங்க
-node server.js
-
-Correct-ah இருந்தா:
-
-MongoDB Connected
-Server running on 5000
-5. இப்போ CRUD practice 🔥
-
-Postman use பண்ணுங்க.
-
-🟢 CREATE — POST
-
-URL:
-
-http://localhost:5000/users
-
-Body → raw → JSON
-
-{
-  "name": "Barani",
-  "email": "barani@gmail.com",
-  "age": 22
-}
-
-Send
-
-Response:
-
-{
-  "message": "User created",
-  "user": {
-    "_id": "68c...",
-    "name": "Barani",
-    "email": "barani@gmail.com",
-    "age": 22
-  }
-}
-
-இந்த _id-ஐ copy பண்ணி வைத்துக்கோங்க.
-
-🔵 READ — GET
-GET http://localhost:5000/users
-
-அனைத்து users-ம் வரும்.
-
-🔵 READ ONE — GET
-GET http://localhost:5000/users/68c...
-
-68c... இடத்துல உங்க actual _id.
-
-ஒரு user மட்டும் வரும்.
-
-🟡 UPDATE — PUT
-PUT http://localhost:5000/users/68c...
-
-Body:
-
-{
-  "name": "Barani Dharan",
-  "age": 23
-}
-
-Response:
-
-{
-  "message": "User updated",
-  "user": {
-    "name": "Barani Dharan",
-    "email": "barani@gmail.com",
-    "age": 23
-  }
-}
-🔴 DELETE — DELETE
-DELETE http://localhost:5000/users/68c...
-
-Response:
-
-{
-  "message": "User deleted"
-}
-⭐ நீங்க இப்போ புரிஞ்சுக்க வேண்டிய முக்கியமான 7 lines
-1. MongoDB connect
-mongoose.connect(process.env.MONGO_URI)
-
-MongoDB-க்கு connect ஆகும்.
-
-2. Schema
-const userSchema = new mongoose.Schema({
-  name: String,
-  email: String,
-  age: Number
-});
-
-Database-la user எப்படி இருக்கணும் என்று define பண்ணுவது.
-
-3. Model
-const User = mongoose.model("User", userSchema);
-
-Schema-வை வைத்து MongoDB-யுடன் work பண்ண Model உருவாக்குறோம்.
-
-4. req.body
-req.body
-
-Postman-ல அனுப்புற data.
-
-{
-  "name": "Barani",
-  "email": "barani@gmail.com"
-}
-5. req.params.id
-req.params.id
-
-URL-ல இருக்குற ID.
-
-/users/68c123
-
-இங்க:
-
-68c123
-
-தான் req.params.id.
-
-6. res.json()
-res.json({
-  message: "User created"
-});
-
-Client/Postmanக்கு response அனுப்பும்.
-
-7. Mongoose CRUD methods
-User.create()
-User.find()
-User.findById()
-User.findByIdAndUpdate()
-User.findByIdAndDelete()
-
-இதுதான் இப்போ முக்கியமாக practice பண்ண வேண்டியது.
-
-POST   → User.create()
-GET    → User.find()
-GET ID → User.findById()
-PUT    → User.findByIdAndUpdate()
-DELETE → User.findByIdAndDelete()
-
-இதையே முதலில் Postman-ல் 4–5 தடவை manually செய்து பாருங்க. அதுக்கப்புறம் நான் உங்களுக்கு req, res, Schema, Model, async/await, ஒவ்வொரு CRUD line-உம் எதுக்கு என்று line-by-line very simple Thanglish-ல teach பண்ணலாம்.
