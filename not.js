@@ -1,18 +1,27 @@
-const handleLogin = async (e) => {
-  e.preventDefault();
+<form onSubmit={handleRegister}>
 
-  try {
-    const result = await login({
-      email,
-      password,
-    }).unwrap();
+  {/* Name */}
+  {/* Email */}
+  {/* Password */}
 
-    alert(result.message);
+  <button
+    type="submit"
+    disabled={isLoading}
+    className="w-full bg-green-500 text-white p-2 rounded hover:bg-green-600"
+  >
+    {isLoading ? "Registering..." : "Register"}
+  </button>
 
-    localStorage.setItem("user", JSON.stringify(result.user));
+</form>
 
-    navigate("/home");
-  } catch (error) {
-    alert(error?.data?.message || "Login failed");
-  }
-};
+<p className="text-center mt-4">
+  Already have an account?{" "}
+
+  <button
+    type="button"
+    onClick={() => navigate("/login")}
+    className="text-blue-500"
+  >
+    Login
+  </button>
+</p>
