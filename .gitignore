@@ -1,234 +1,1566 @@
-. Folder structure
-backend
+Yes. 👍 உங்க existing same project concept-ஐ வைத்து, frontend + backend separate folders, MongoDB, Register/Login, password hashing, simple RTK Query use பண்ணி complete project கொடுக்கிறேன்.
+
+நம்ம flow:
+
+fullstack/
 │
-├── models
+├── backend/
+│   ├── models/
+│   │   └── User.js
+│   ├── routes/
+│   │   └── authRoutes.js
+│   ├── .env
+│   ├── package.json
+│   └── server.js
+│
+└── frontend/
+    ├── src/
+    │   ├── components/
+    │   │   ├── Navbar.jsx
+    │   │   └── Footer.jsx
+    │   │
+    │   ├── pages/
+    │   │   ├── Home.jsx
+    │   │   ├── Login.jsx
+    │   │   └── Register.jsx
+    │   │
+    │   ├── redux/
+    │   │   ├── authApi.js
+    │   │   └── store/
+    │   │       └── store.js
+    │   │
+    │   ├── App.jsx
+    │   ├── App.css
+    │   ├── index.css
+    │   └── main.jsx
+    │
+    └── package.json
+PART 1 — Final Project Flow
+
+நம்ம project எப்படி work ஆகும்:
+
+Register Page
+     ↓
+RTK Query
+     ↓
+POST /api/auth/register
+     ↓
+Express Backend
+     ↓
+bcrypt password hash
+     ↓
+MongoDB
+     ↓
+User saved
+
+Login:
+
+Login Page
+     ↓
+RTK Query
+     ↓
+POST /api/auth/login
+     ↓
+Express Backend
+     ↓
+MongoDB user check
+     ↓
+bcrypt password check
+     ↓
+Login Success
+     ↓
+Home Page
+PART 2 — Create Main Folder
+
+Desktop-ல்:
+
+fullstack
+
+Create pannunga.
+
+VS Code-ல்:
+
+File → Open Folder → fullstack
+PART 3 — Backend Create
+
+VS Code terminal open pannunga:
+
+cd fullstack
+mkdir backend
+cd backend
+
+Now backend packages install:
+
+npm init -y
+
+Then:
+
+npm install express mongoose cors dotenv bcryptjs
+PART 4 — Backend Folder Structure
+
+backend உள்ளே:
+
+backend/
+│
+├── models/
 │   └── User.js
 │
+├── routes/
+│   └── authRoutes.js
+│
 ├── .env
-├── server.js
-└── package.json
-2. Install
-npm init -y
-npm install express mongoose dotenv cors
-3. .env
+├── package.json
+└── server.js
+STEP 1 — backend/package.json
+
+backend/package.json open pannunga.
+
+இத முழுவதும் replace pannunga:
+
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "Fullstack authentication backend",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.2",
+    "express": "^5.1.0",
+    "mongoose": "^8.18.0"
+  }
+}
+Explanation
+"name": "backend"
+
+English: Project name.
+
+Tamil: Backend project name.
+
+"main": "server.js"
+
+English: Main backend file is server.js.
+
+Tamil: Backend start ஆகுற main file server.js.
+
+"start": "node server.js"
+
+English: Starts backend server.
+
+Tamil: Backend server start பண்ணும்.
+
+STEP 2 — Install packages safely
+
+Package versions mismatch ஆகக்கூடாது என்றால் easiest:
+
+npm install express mongoose cors dotenv bcryptjs
+
+இதுக்கப்புறம் package.json automatically update ஆகும்.
+
+STEP 3 — .env
+
+backend/.env
+
 PORT=5000
-MONGO_URI=mongodb://127.0.0.1:27017/authDB
+MONGO_URI=mongodb://127.0.0.1:27017/fullstackDB
+Explanation
+PORT=5000
 
-Easy meaning:
+English: Backend runs on port 5000.
 
-PORT → server port
-MONGO_URI → MongoDB connection
-4. models/User.js
+Tamil: Backend 5000 port-ல் run ஆகும்.
+
+MONGO_URI=...
+
+English: MongoDB connection URL.
+
+Tamil: MongoDB database connect ஆகுற address.
+
+STEP 4 — User.js
+
+Create:
+
+backend/models/User.js
+
+Code:
+
 const mongoose = require("mongoose");
 
-const userSchema = new mongoose.Schema({
-  name: String,
-  email: String,
-  password: String
+const userSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+    },
+
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+
+    password: {
+      type: String,
+      required: true,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
+
+const User = mongoose.model("User", userSchema);
+
+module.exports = User;
+Line-by-line simple explanation
+const mongoose = require("mongoose");
+
+English: Import Mongoose.
+
+Tamil: MongoDB-யுடன் work செய்ய Mongoose import செய்கிறோம்.
+
+const userSchema = new mongoose.Schema(
+
+English: Creates the structure of user data.
+
+Tamil: User data எப்படி இருக்க வேண்டும் என்று structure create செய்கிறது.
+
+name: {
+  type: String,
+  required: true
+}
+
+English: Name must be text and required.
+
+Tamil: Name compulsory; text ஆக இருக்க வேண்டும்.
+
+email: {
+  type: String,
+  required: true,
+  unique: true
+}
+
+English: Email is required and cannot be duplicated.
+
+Tamil: Email compulsory; same email மீண்டும் register செய்ய முடியாது.
+
+password
+
+English: Stores the hashed password.
+
+Tamil: Password direct-ஆ store பண்ணாமல் hashed password store பண்ணுவோம்.
+
+mongoose.model("User", userSchema)
+
+English: Creates User model.
+
+Tamil: MongoDB-ல் User collection-ஐ handle செய்ய model உருவாக்குகிறது.
+
+STEP 5 — authRoutes.js
+
+Create:
+
+backend/routes/authRoutes.js
+
+Full code:
+
+const express = require("express");
+const bcrypt = require("bcryptjs");
+const User = require("../models/User");
+
+const router = express.Router();
+
+
+// ================= REGISTER =================
+
+router.post("/register", async (req, res) => {
+  try {
+
+    const { name, email, password } = req.body;
+
+    // Check fields
+    if (!name || !email || !password) {
+      return res.status(400).json({
+        message: "All fields are required",
+      });
+    }
+
+    // Check existing user
+    const existingUser = await User.findOne({ email });
+
+    if (existingUser) {
+      return res.status(400).json({
+        message: "Email already registered",
+      });
+    }
+
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create user
+    const newUser = new User({
+      name,
+      email,
+      password: hashedPassword,
+    });
+
+    // Save user
+    await newUser.save();
+
+    res.status(201).json({
+      message: "Registration successful",
+    });
+
+  } catch (error) {
+
+    console.log(error);
+
+    res.status(500).json({
+      message: "Server error",
+    });
+
+  }
 });
 
-module.exports = mongoose.model("User", userSchema);
-இதுதான் Mongoose Model
-Schema → எப்படி data இருக்கணும்
-Model  → MongoDB-ல் data work பண்ண
-5. server.js
 
-இதை மட்டும் முதலில் practice பண்ணுங்க 👇
+// ================= LOGIN =================
+
+router.post("/login", async (req, res) => {
+  try {
+
+    const { email, password } = req.body;
+
+    // Check fields
+    if (!email || !password) {
+      return res.status(400).json({
+        message: "Email and password are required",
+      });
+    }
+
+    // Find user
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(401).json({
+        message: "Invalid email or password",
+      });
+    }
+
+    // Compare password
+    const passwordMatch = await bcrypt.compare(
+      password,
+      user.password
+    );
+
+    if (!passwordMatch) {
+      return res.status(401).json({
+        message: "Invalid email or password",
+      });
+    }
+
+    // Login successful
+    res.status(200).json({
+      message: "Login successful",
+
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+      },
+    });
+
+  } catch (error) {
+
+    console.log(error);
+
+    res.status(500).json({
+      message: "Server error",
+    });
+
+  }
+});
+
+
+module.exports = router;
+authRoutes important explanation
+Register
+router.post("/register", ...)
+
+English: Handles register API.
+
+Tamil: Register request-ஐ handle செய்கிறது.
+
+Actual URL:
+
+http://localhost:5000/api/auth/register
+const { name, email, password } = req.body;
+
+English: Gets data sent from frontend.
+
+Tamil: Frontend அனுப்பிய name, email, password-ஐ பெறுகிறது.
+
+User.findOne({ email })
+
+English: Checks whether email already exists.
+
+Tamil: அந்த email MongoDB-ல் already இருக்கிறதா என்று check செய்கிறது.
+
+bcrypt.hash(password, 10)
+
+English: Converts password into a secure hash.
+
+Tamil: Password-ஐ secure hash ஆக மாற்றுகிறது.
+
+newUser.save()
+
+English: Saves user into MongoDB.
+
+Tamil: User data MongoDB-ல் save ஆகிறது.
+
+STEP 6 — server.js
+
+Create:
+
+backend/server.js
+
+Full code:
 
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const dotenv = require("dotenv");
 
-const User = require("./models/User");
+const authRoutes = require("./routes/authRoutes");
 
 dotenv.config();
 
 const app = express();
 
+
+// Middleware
 app.use(cors());
+
 app.use(express.json());
 
 
-// MongoDB Connect
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log("MongoDB Connected"))
-  .catch((err) => console.log(err));
+// Routes
+app.use("/api/auth", authRoutes);
 
 
-// HOME
+// Test API
 app.get("/", (req, res) => {
-  res.send("Server is running");
+  res.send("Backend server is running");
 });
 
 
-// REGISTER - CREATE
-app.post("/register", async (req, res) => {
+// MongoDB connection
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => {
 
-  const user = await User.create(req.body);
+    console.log("MongoDB connected");
 
-  res.json({
-    message: "Registration successful",
-    user
-  });
-});
-
-
-// LOGIN
-app.post("/login", async (req, res) => {
-
-  const user = await User.findOne({
-    email: req.body.email,
-    password: req.body.password
-  });
-
-  if (!user) {
-    return res.json({
-      message: "Invalid email or password"
+    app.listen(process.env.PORT, () => {
+      console.log(
+        `Server running on http://localhost:${process.env.PORT}`
+      );
     });
-  }
 
-  res.json({
-    message: "Login successful",
-    user
+  })
+  .catch((error) => {
+
+    console.log("MongoDB connection failed");
+    console.log(error);
+
   });
+server.js explanation
+const express = require("express");
+
+English: Imports Express.
+
+Tamil: Backend server create செய்ய Express import.
+
+const mongoose = require("mongoose");
+
+English: Used to connect MongoDB.
+
+Tamil: MongoDB connect செய்ய Mongoose.
+
+const cors = require("cors");
+
+English: Allows frontend and backend communication.
+
+Tamil: Frontend localhost:5173 இருந்து backend localhost:5000 communicate செய்ய CORS தேவை.
+
+const dotenv = require("dotenv");
+
+English: Reads .env.
+
+Tamil: .env உள்ள PORT/MONGO_URI values read செய்கிறது.
+
+app.use(cors());
+
+English: Enables CORS.
+
+Tamil: Frontend → Backend request allow செய்கிறது.
+
+app.use(express.json());
+
+English: Reads JSON request body.
+
+Tamil: Frontend அனுப்புற JSON data-ஐ req.body மூலம் பெற உதவும்.
+
+app.use("/api/auth", authRoutes);
+
+English: Connects authentication routes.
+
+Tamil: authRoutes.js-ஐ /api/auth prefix-க்கு connect செய்கிறது.
+
+So:
+
+/register
+
+becomes:
+
+/api/auth/register
+
+And:
+
+/login
+
+becomes:
+
+/api/auth/login
+STEP 7 — Run Backend
+
+Terminal:
+
+cd fullstack/backend
+
+Then:
+
+npm install
+
+Then:
+
+npm start
+
+Expected:
+
+MongoDB connected
+Server running on http://localhost:5000
+If this comes:
+MongoDB connection failed
+
+MongoDB service/server running இருக்கிறதா check பண்ணுங்க.
+
+PART 2 — FRONTEND
+
+Now new terminal open pannunga.
+
+cd fullstack
+
+If frontend already exists, use that.
+
+If not:
+
+npm create vite@latest frontend
+
+Choose:
+
+React
+JavaScript
+
+Then:
+
+cd frontend
+npm install
+
+Install required packages:
+
+npm install react-router-dom @reduxjs/toolkit react-redux
+STEP 8 — Frontend Structure
+frontend/
+│
+├── src/
+│   │
+│   ├── components/
+│   │   ├── Navbar.jsx
+│   │   └── Footer.jsx
+│   │
+│   ├── pages/
+│   │   ├── Home.jsx
+│   │   ├── Login.jsx
+│   │   └── Register.jsx
+│   │
+│   ├── redux/
+│   │   ├── authApi.js
+│   │   └── store/
+│   │       └── store.js
+│   │
+│   ├── App.jsx
+│   ├── App.css
+│   ├── index.css
+│   └── main.jsx
+│
+└── package.json
+STEP 9 — authApi.js
+
+Create:
+
+frontend/src/redux/authApi.js
+
+This is the main RTK Query file.
+
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+
+export const authApi = createApi({
+  reducerPath: "authApi",
+
+  baseQuery: fetchBaseQuery({
+    baseUrl: "http://localhost:5000/api/auth",
+  }),
+
+  endpoints: (builder) => ({
+
+    register: builder.mutation({
+      query: (userData) => ({
+        url: "/register",
+        method: "POST",
+        body: userData,
+      }),
+    }),
+
+    login: builder.mutation({
+      query: (userData) => ({
+        url: "/login",
+        method: "POST",
+        body: userData,
+      }),
+    }),
+
+  }),
 });
 
 
-// GET USERS - READ
-app.get("/users", async (req, res) => {
+export const {
+  useRegisterMutation,
+  useLoginMutation,
+} = authApi;
+RTK Query இதுல என்ன செய்கிறது?
 
-  const users = await User.find();
+Normally:
 
-  res.json(users);
+fetch("http://localhost:5000/api/auth/login")
+
+நாம் manually எழுதுவோம்.
+
+RTK Query-ல்:
+
+login: builder.mutation({
+
+API define செய்கிறோம்.
+
+Then Login page:
+
+const [loginUser] = useLoginMutation();
+
+Then:
+
+loginUser({
+  email,
+  password
 });
 
+That's it. 👍
 
-// UPDATE
-app.put("/users/:id", async (req, res) => {
+STEP 10 — store.js
 
-  const user = await User.findByIdAndUpdate(
-    req.params.id,
-    req.body,
-    { new: true }
+Create:
+
+frontend/src/redux/store/store.js
+
+Code:
+
+import { configureStore } from "@reduxjs/toolkit";
+import { authApi } from "../authApi";
+
+export const store = configureStore({
+
+  reducer: {
+    [authApi.reducerPath]: authApi.reducer,
+  },
+
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(authApi.middleware),
+
+});
+Explanation
+configureStore
+
+English: Creates Redux store.
+
+Tamil: Redux central store உருவாக்குகிறது.
+
+authApi.reducer
+
+English: Adds RTK Query data to Redux.
+
+Tamil: RTK Query data Redux store-க்கு connect ஆகிறது.
+
+authApi.middleware
+
+English: Enables RTK Query API features.
+
+Tamil: RTK Query requests/cache/loading போன்ற features work ஆக middleware தேவை.
+
+STEP 11 — main.jsx
+
+frontend/src/main.jsx
+
+import React from "react";
+import ReactDOM from "react-dom/client";
+
+import { Provider } from "react-redux";
+import { BrowserRouter } from "react-router-dom";
+
+import { store } from "./redux/store/store";
+
+import App from "./App";
+
+import "./index.css";
+
+ReactDOM.createRoot(document.getElementById("root")).render(
+  <React.StrictMode>
+
+    <Provider store={store}>
+
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+
+    </Provider>
+
+  </React.StrictMode>
+);
+Important
+<Provider store={store}>
+
+English: Makes Redux available to entire application.
+
+Tamil: Full React application-க்கும் Redux access கிடைக்கிறது.
+
+STEP 12 — App.jsx
+
+frontend/src/App.jsx
+
+import { Routes, Route, Navigate } from "react-router-dom";
+
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+
+function App() {
+  return (
+    <Routes>
+
+      <Route path="/" element={<Navigate to="/login" />} />
+
+      <Route path="/login" element={<Login />} />
+
+      <Route path="/register" element={<Register />} />
+
+      <Route path="/home" element={<Home />} />
+
+    </Routes>
+  );
+}
+
+export default App;
+Routes
+/login
+
+→ Login page
+
+/register
+
+→ Register page
+
+/home
+
+→ Home page
+
+STEP 13 — Register.jsx
+
+frontend/src/pages/Register.jsx
+
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
+import { useRegisterMutation } from "../redux/authApi";
+
+function Register() {
+
+  const [name, setName] = useState("");
+
+  const [email, setEmail] = useState("");
+
+  const [password, setPassword] = useState("");
+
+  const navigate = useNavigate();
+
+  const [registerUser, { isLoading }] =
+    useRegisterMutation();
+
+
+  const handleRegister = async (e) => {
+
+    e.preventDefault();
+
+    try {
+
+      const response = await registerUser({
+        name,
+        email,
+        password,
+      }).unwrap();
+
+      alert(response.message);
+
+      navigate("/login");
+
+    } catch (error) {
+
+      console.log(error);
+
+      alert(
+        error?.data?.message ||
+        "Registration failed"
+      );
+
+    }
+  };
+
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-500">
+
+      <div className="bg-white p-8 rounded-lg shadow-md w-96">
+
+        <h1 className="text-2xl font-bold text-center mb-6">
+          Register
+        </h1>
+
+
+        <form onSubmit={handleRegister}>
+
+          <label className="block mb-2 font-medium">
+            Name
+          </label>
+
+          <input
+            type="text"
+            placeholder="Enter your name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="w-full border p-2 rounded mb-4"
+          />
+
+
+          <label className="block mb-2 font-medium">
+            Gmail
+          </label>
+
+          <input
+            type="email"
+            placeholder="Enter your Gmail"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full border p-2 rounded mb-4"
+          />
+
+
+          <label className="block mb-2 font-medium">
+            Password
+          </label>
+
+          <input
+            type="password"
+            placeholder="Enter your password"
+            value={password}
+            onChange={(e) =>
+              setPassword(e.target.value)
+            }
+            className="w-full border p-2 rounded mb-6"
+          />
+
+
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="w-full bg-green-500 text-white p-2 rounded hover:bg-green-600"
+          >
+            {isLoading
+              ? "Registering..."
+              : "Register"}
+          </button>
+
+        </form>
+
+
+        <p className="text-center mt-4">
+
+          Already have an account?{" "}
+
+          <button
+            type="button"
+            onClick={() => navigate("/login")}
+            className="text-blue-500"
+          >
+            Login
+          </button>
+
+        </p>
+
+      </div>
+
+    </div>
+  );
+}
+
+export default Register;
+Register முக்கியமான lines
+const [registerUser, { isLoading }] =
+  useRegisterMutation();
+
+English: Gets RTK Query register function.
+
+Tamil: RTK Query-லிருந்து register function பெறுகிறோம்.
+
+registerUser({
+  name,
+  email,
+  password,
+})
+
+English: Sends user data to backend.
+
+Tamil: User details backend-க்கு அனுப்புகிறது.
+
+.unwrap()
+
+English: Gives successful response directly and throws error for failed response.
+
+Tamil: Success response direct-ஆ கிடைக்கும்; error வந்தால் catch போகும்.
+
+STEP 14 — Login.jsx
+
+frontend/src/pages/Login.jsx
+
+இந்த file மிகவும் important.
+
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
+import { useLoginMutation } from "../redux/authApi";
+
+function Login() {
+
+  const [email, setEmail] = useState("");
+
+  const [password, setPassword] = useState("");
+
+  const navigate = useNavigate();
+
+  const [loginUser, { isLoading }] =
+    useLoginMutation();
+
+
+  const handleLogin = async (e) => {
+
+    e.preventDefault();
+
+    try {
+
+      const response = await loginUser({
+        email,
+        password,
+      }).unwrap();
+
+
+      alert(response.message);
+
+
+      localStorage.setItem(
+        "user",
+        JSON.stringify(response.user)
+      );
+
+
+      navigate("/home");
+
+    } catch (error) {
+
+      console.log(error);
+
+      alert(
+        error?.data?.message ||
+        "Login failed"
+      );
+
+    }
+  };
+
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-500">
+
+      <div className="bg-white p-8 rounded-lg shadow-md w-96">
+
+        <h1 className="text-2xl font-bold text-center mb-6">
+          Login
+        </h1>
+
+
+        <form onSubmit={handleLogin}>
+
+          <label className="block mb-2 font-medium">
+            Gmail
+          </label>
+
+          <input
+            type="email"
+            placeholder="Enter your Gmail"
+            value={email}
+            onChange={(e) =>
+              setEmail(e.target.value)
+            }
+            className="w-full border p-2 rounded mb-4"
+          />
+
+
+          <label className="block mb-2 font-medium">
+            Password
+          </label>
+
+          <input
+            type="password"
+            placeholder="Enter your password"
+            value={password}
+            onChange={(e) =>
+              setPassword(e.target.value)
+            }
+            className="w-full border p-2 rounded mb-6"
+          />
+
+
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+          >
+            {isLoading
+              ? "Logging in..."
+              : "Login"}
+          </button>
+
+        </form>
+
+
+        <p className="text-center mt-4">
+
+          Don't have an account?{" "}
+
+          <button
+            type="button"
+            onClick={() => navigate("/register")}
+            className="text-blue-500"
+          >
+            Register
+          </button>
+
+        </p>
+
+      </div>
+
+    </div>
+  );
+}
+
+export default Login;
+Login Flow
+
+User:
+
+Email = test@gmail.com
+Password = 123456
+
+Click Login.
+
+This executes:
+
+loginUser({
+  email,
+  password
+})
+
+RTK Query sends:
+
+POST
+http://localhost:5000/api/auth/login
+
+Backend checks MongoDB.
+
+Correct:
+
+Login successful
+
+Then:
+
+navigate("/home");
+STEP 15 — Navbar.jsx
+
+frontend/src/components/Navbar.jsx
+
+import { useNavigate } from "react-router-dom";
+
+function Navbar() {
+
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+
+    localStorage.removeItem("user");
+
+    navigate("/login");
+  };
+
+
+  return (
+    <nav className="bg-blue-600 text-white px-6 py-4">
+
+      <div className="flex justify-between items-center">
+
+        <h1 className="text-2xl font-bold">
+          My Dashboard
+        </h1>
+
+
+        <div className="flex gap-6">
+
+          <button
+            onClick={() => navigate("/home")}
+          >
+            Home
+          </button>
+
+
+          <button
+            onClick={handleLogout}
+          >
+            Logout
+          </button>
+
+        </div>
+
+      </div>
+
+    </nav>
+  );
+}
+
+export default Navbar;
+STEP 16 — Footer.jsx
+
+frontend/src/components/Footer.jsx
+
+function Footer() {
+
+  return (
+    <footer className="bg-gray-800 text-white text-center p-5">
+
+      <p>
+        © 2026 MyDashboard. All Rights Reserved.
+      </p>
+
+    </footer>
+  );
+}
+
+export default Footer;
+STEP 17 — Home.jsx
+
+frontend/src/pages/Home.jsx
+
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
+
+function Home() {
+
+  const user = JSON.parse(
+    localStorage.getItem("user")
   );
 
-  res.json({
-    message: "User updated",
-    user
-  });
-});
+
+  return (
+    <div className="min-h-screen flex flex-col">
+
+      <Navbar />
 
 
-// DELETE
-app.delete("/users/:id", async (req, res) => {
+      <main className="flex-1 bg-gray-100 py-10">
 
-  await User.findByIdAndDelete(req.params.id);
+        <div className="max-w-5xl mx-auto px-4">
 
-  res.json({
-    message: "User deleted"
-  });
-});
+          <h1 className="text-3xl font-bold mb-2">
+            Welcome {user?.name}
+          </h1>
+
+          <p className="text-gray-600 mb-8">
+            {user?.email}
+          </p>
 
 
-// SERVER
-app.listen(process.env.PORT, () => {
-  console.log("Server running on port 5000");
-});
-6. இதை எப்படி நினைவில் வைக்கணும்?
+          <div className="grid md:grid-cols-3 gap-6">
 
-ரொம்ப easy 👇
 
-CREATE
-app.post("/register", async (req, res) => {
-  const user = await User.create(req.body);
-  res.json(user);
-});
+            <div className="bg-white p-6 rounded-lg shadow">
 
-POST → CREATE
+              <h2 className="text-xl font-bold mb-2">
+                Users
+              </h2>
 
-READ
-app.get("/users", async (req, res) => {
-  const users = await User.find();
-  res.json(users);
-});
+              <p className="text-gray-600">
+                Manage users
+              </p>
 
-GET → READ
+            </div>
 
-UPDATE
-app.put("/users/:id", async (req, res) => {
-  const user = await User.findByIdAndUpdate(
-    req.params.id,
-    req.body,
-    { new: true }
+
+            <div className="bg-white p-6 rounded-lg shadow">
+
+              <h2 className="text-xl font-bold mb-2">
+                Products
+              </h2>
+
+              <p className="text-gray-600">
+                Manage products
+              </p>
+
+            </div>
+
+
+            <div className="bg-white p-6 rounded-lg shadow">
+
+              <h2 className="text-xl font-bold mb-2">
+                Reports
+              </h2>
+
+              <p className="text-gray-600">
+                View reports
+              </p>
+
+            </div>
+
+
+          </div>
+
+        </div>
+
+      </main>
+
+
+      <Footer />
+
+    </div>
   );
+}
 
-  res.json(user);
-});
+export default Home;
+STEP 18 — index.css
 
-PUT → UPDATE
+If you're using Tailwind already, keep your existing Tailwind setup.
 
-DELETE
-app.delete("/users/:id", async (req, res) => {
-  await User.findByIdAndDelete(req.params.id);
+For basic version:
 
-  res.json({
-    message: "User deleted"
-  });
-});
+@import "tailwindcss";
 
-DELETE → DELETE
+If your current Tailwind project is already working, don't change your Tailwind configuration unnecessarily.
 
-7. Postman-la test பண்ணுங்க
+STEP 19 — App.css
+
+You can keep:
+
+#root {
+  min-height: 100vh;
+}
+STEP 20 — Frontend package install
+
+Frontend terminal:
+
+cd fullstack/frontend
+
+Run:
+
+npm install
+
+If RTK packages not installed:
+
+npm install @reduxjs/toolkit react-redux
+
+React Router:
+
+npm install react-router-dom
+STEP 21 — Run Frontend
+
+Frontend terminal:
+
+npm run dev
+
+You'll get something like:
+
+Local: http://localhost:5173/
+
+Open:
+
+http://localhost:5173
+STEP 22 — Run BOTH terminals
+
+This is very important.
+
+Terminal 1 — Backend
+cd fullstack/backend
+npm start
+
+You should see:
+
+MongoDB connected
+Server running on http://localhost:5000
+Terminal 2 — Frontend
+cd fullstack/frontend
+npm run dev
+
+You should see:
+
+Local: http://localhost:5173/
+
+Both must be running.
+
+STEP 23 — Test Register
+
+Open:
+
+http://localhost:5173/register
+
+Enter:
+
+Name:
+Arun
+
+Email:
+arun@gmail.com
+
+Password:
+123456
+
+Click:
+
 Register
 
-POST
+Flow:
 
-http://localhost:5000/register
+Register.jsx
+      ↓
+useRegisterMutation()
+      ↓
+RTK Query
+      ↓
+POST /api/auth/register
+      ↓
+Express
+      ↓
+bcrypt
+      ↓
+MongoDB
 
-Body → raw → JSON:
+You should get:
 
-{
-  "name": "Barani",
-  "email": "barani@gmail.com",
-  "password": "123456"
-}
+Registration successful
+
+Then automatically:
+
+/login
+STEP 24 — Check MongoDB
+
+Open MongoDB Compass.
+
+Connection:
+
+mongodb://127.0.0.1:27017
+
+Database:
+
+fullstackDB
+
+Collection:
+
+users
+
+You should see:
+
+name: Arun
+email: arun@gmail.com
+password: $2b$10$........
+
+⚠️ Password:
+
+123456
+
+அப்படியே MongoDB-ல் இருக்காது.
+
+Instead hash இருக்கும்.
+
+That's because:
+
+bcrypt.hash(password, 10)
+STEP 25 — Test Login
+
+Open:
+
+http://localhost:5173/login
+
+Enter:
+
+Email:
+arun@gmail.com
+
+Password:
+123456
+
+Click:
+
 Login
 
-POST
+Flow:
 
-http://localhost:5000/login
-{
-  "email": "barani@gmail.com",
-  "password": "123456"
-}
-Get Users
+Login.jsx
+     ↓
+useLoginMutation()
+     ↓
+RTK Query
+     ↓
+POST /api/auth/login
+     ↓
+Backend
+     ↓
+User.findOne()
+     ↓
+bcrypt.compare()
+     ↓
+Login successful
+     ↓
+/home
 
-GET
+Home page:
 
-http://localhost:5000/users
-Update
+Welcome Arun
+arun@gmail.com
+STEP 26 — RTK Query நம்ம project-ல் எங்கே use பண்ணியிருக்கோம்?
 
-PUT
+Only one file:
 
-http://localhost:5000/users/USER_ID
+frontend
+└── src
+    └── redux
+        └── authApi.js
 
-Body:
+இதுல:
 
-{
-  "name": "Barani Dharan"
-}
-Delete
+register: builder.mutation()
 
-DELETE
+and:
 
-http://localhost:5000/users/USER_ID
-🧠 One-line memory trick
-POST    → User.create()
-GET     → User.find()
-PUT     → User.findByIdAndUpdate()
-DELETE  → User.findByIdAndDelete()
+login: builder.mutation()
+Register.jsx
+useRegisterMutation()
+Login.jsx
+useLoginMutation()
 
-இதுதான் உங்களுக்கு இப்போ MongoDB + Mongoose CRUD-க்கு முக்கியமான part.
+That's enough for this simple RTK Query project.
 
-Authentication-ல முதலில் இந்த simple login புரிஞ்சுக்கோங்க. Real project-ல password-ஐ plain text-ஆ store பண்ணக்கூடாது; அதற்கு அடுத்ததாக bcrypt add பண்ணலாம்.
+FINAL PROJECT STRUCTURE
+fullstack
+│
+├── backend
+│   │
+│   ├── models
+│   │   └── User.js
+│   │
+│   ├── routes
+│   │   └── authRoutes.js
+│   │
+│   ├── node_modules
+│   │
+│   ├── .env
+│   ├── package.json
+│   ├── package-lock.json
+│   └── server.js
+│
+│
+└── frontend
+    │
+    ├── node_modules
+    │
+    ├── public
+    │
+    ├── src
+    │   │
+    │   ├── components
+    │   │   ├── Navbar.jsx
+    │   │   └── Footer.jsx
+    │   │
+    │   ├── pages
+    │   │   ├── Home.jsx
+    │   │   ├── Login.jsx
+    │   │   └── Register.jsx
+    │   │
+    │   ├── redux
+    │   │   ├── authApi.js
+    │   │   └── store
+    │   │       └── store.js
+    │   │
+    │   ├── App.jsx
+    │   ├── App.css
+    │   ├── index.css
+    │   └── main.jsx
+    │
+    ├── package.json
+    └── package-lock.json
+🔥 Remember these 5 important things
+1. Backend URL
+http://localhost:5000
+2. Register API
+POST /api/auth/register
+
+Full:
+
+http://localhost:5000/api/auth/register
+3. Login API
+POST /api/auth/login
+
+Full:
+
+http://localhost:5000/api/auth/login
+4. Frontend
+http://localhost:5173
+5. RTK Query
+authApi.js
+     ↓
+useRegisterMutation()
+useLoginMutation()
+
+இதுதான் உங்க existing project-ஐ simple-ஆ வைத்துக்கொண்டு RTK Query + Express + MongoDB authentication complete setup.
