@@ -1,27 +1,48 @@
-<form onSubmit={handleRegister}>
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 
-  {/* Name */}
-  {/* Email */}
-  {/* Password */}
+function Home() {
+  const userData = localStorage.getItem("user");
 
-  <button
-    type="submit"
-    disabled={isLoading}
-    className="w-full bg-green-500 text-white p-2 rounded hover:bg-green-600"
-  >
-    {isLoading ? "Registering..." : "Register"}
-  </button>
+  const user = userData ? JSON.parse(userData) : null;
 
-</form>
+  return (
+    <div className="min-h-screen flex flex-col bg-gray-100">
 
-<p className="text-center mt-4">
-  Already have an account?{" "}
+      <Navbar />
 
-  <button
-    type="button"
-    onClick={() => navigate("/login")}
-    className="text-blue-500"
-  >
-    Login
-  </button>
-</p>
+      <main className="flex-1 flex items-center justify-center">
+
+        <div className="text-center">
+
+          <h1 className="text-4xl font-bold text-blue-600 mb-4">
+            Welcome to Home Page
+          </h1>
+
+          {user ? (
+            <>
+              <p className="text-xl text-gray-700">
+                Welcome, {user.name}!
+              </p>
+
+              <p className="text-gray-600 mt-2">
+                Email: {user.email}
+              </p>
+            </>
+          ) : (
+            <p className="text-gray-600">
+              Welcome User!
+            </p>
+          )}
+
+        </div>
+
+      </main>
+
+      <Footer />
+
+    </div>
+  );
+}
+
+export default Home;
